@@ -1,0 +1,27 @@
+[project]
+name = "cc_embed"
+version = "0.1.0"
+description = "Showing how to run qwen-3 models in daft to make oodles of embeddings. Uses common crawl parquet files as input."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "accelerate>=1.10.0",
+    "daft[ray]>=0.5.19",
+    "pip>=25.2",
+    "sentence-transformers>=5.1.0",
+    "spacy>=3.8.7",
+    "torch>=2.8.0",
+    "transformers>=4.55.2",
+    "turbopuffer>=0.6.5",
+]
+
+
+[build-system]
+requires = ["uv_build>=0.8.11,<0.9.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "ipdb>=0.13.13",
+    "ipython>=9.4.0",
+]

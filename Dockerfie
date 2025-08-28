@@ -1,0 +1,29 @@
+FROM pytorch/pytorch:2.8.0-cuda12.9-cudnn9-runtime
+
+RUN apt update -y && \
+    apt upgrade -y && \
+    apt install -y vim htop nvtop curl dumb-init && \
+    rm -rf /var/lib/apt/lists/*
+
+ARG UV_VERSION="0.8.11"
+ARG UV_ARCH="x86_64-unknown-linux-gnu"
+RUN curl -LO https://github.com/astral-sh/uv/releases/download/${UV_VERSION}/uv-${UV_ARCH}.tar.gz && \
+    tar -xzf uv-${UV_ARCH}.tar.gz && \
+    mv uv-${UV_ARCH}/uv /usr/local/bin/uv && \
+    rm -rf uv-${UV_ARCH}*
+
+RUN mkdir /install/
+
+WORKDIR /install
+
+COPY pyproject.toml ./
+
+RUN uv pip compile pyproject.toml | grep -v "nvidia" | grep -v "torch=" > requirements.txt
+RUN pip install -r requirements.txt
+
+COPY README.md ./
+COPY ./src/ ./src/
+
+RUN pip install --no-deps -e .
+
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]

@@ -1,0 +1,61 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: qwen-embed-job
+  labels:
+    app: qwen-embed
+    component: embedding
+spec:
+  template:
+    spec:
+      containers:
+      - name: qwen-embed-container
+        image: docker.io/malcolmgreaves/daft-qwen3-text-embedding:${COMMIT}
+        command: ["python", "-m", "cc_embed.main_pipeline"]
+        resources:
+          requests:
+            cpu: "8"
+            memory: "32Gi"
+            nvidia.com/gpu: "1"
+          limits:
+            cpu: "16"
+            memory: "64Gi"
+            nvidia.com/gpu: "1"
+        env:
+        - name: NVIDIA_VISIBLE_DEVICES
+          value: "all"
+        - name: NVIDIA_DRIVER_CAPABILITIES
+          value: "compute,utility"
+        - name: INPUT
+          value: "${INPUT}"
+        - name: OUTPUT
+          value: "${OUTPUT}"
+        - name: LIMIT
+          value: "${LIMIT}"
+        - name: MAX_SEQ_LEN_SPACY
+          value: "${MAX_SEQ_LEN_SPACY}"
+        - name: MAX_SEQ_LEN_SENTENCE_TRANSFORMER
+          value: "${MAX_SEQ_LEN_SENTENCE_TRANSFORMER}"
+        - name: NUM_GPU_NODES
+          value: "${NUM_GPU_NODES}"
+        - name: NLP_MODEL_NAME
+          value: "${NLP_MODEL_NAME}"
+        - name: EMBEDDING_MODEL_NAME
+          value: "${EMBEDDING_MODEL_NAME}"
+        - name: CHUNKING_PARALLELISM
+          value: "${CHUNKING_PARALLELISM}"
+        - name: BATCH_SIZE
+          value: "${BATCH_SIZE}"
+        - name: SENTENCE_TRANSFORMER_BATCH_SIZE
+          value: "${SENTENCE_TRANSFORMER_BATCH_SIZE}"
+        - name: ENCODING_DIM
+          value: "${ENCODING_DIM}"
+      restartPolicy: Never
+      nodeSelector:
+        k8s.eventual.io/node-role: textembed-sm
+      tolerations:
+      - key: nvidia.com/gpu
+        operator: Exists
+        effect: NoSchedule
+  backoffLimit: 4
+  activeDeadlineSeconds: 86400  # 24 hours
