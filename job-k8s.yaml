@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
         - name: qwen-embed-container
-          image: docker.io/malcolmgreaves/daft-qwen3-text-embedding:${COMMIT}
+          image: docker.io/malcolmgreaves/daft-qwen3-text-embedding:latest
           command: ["python", "-m", "cc_embed.main_pipeline"]
           resources:
             requests:
@@ -27,33 +27,33 @@ spec:
             - name: NVIDIA_DRIVER_CAPABILITIES
               value: "compute,utility"
             - name: INPUT
-              value: "${INPUT}"
+              value: "s3://commoncrawl/crawl-data/CC-MAIN-2025-08/segments/*/warc/*"
             - name: OUTPUT
-              value: "${OUTPUT}"
+              value: ""
             - name: LIMIT
-              value: "${LIMIT}"
+              value: ""
             - name: IS_PARQUET
-              value: "${IS_PARQUET}"
+              value: "0"
             - name: MAX_SEQ_LEN_SPACY
-              value: "${MAX_SEQ_LEN_SPACY}"
+              value: "100000"
             - name: MAX_SEQ_LEN_SENTENCE_TRANSFORMER
-              value: "${MAX_SEQ_LEN_SENTENCE_TRANSFORMER}"
+              value: "8192"
             - name: NUM_GPU_NODES
-              value: "${NUM_GPU_NODES}"
+              value: "1"
             - name: NLP_MODEL_NAME
-              value: "${NLP_MODEL_NAME}"
+              value: "en_core_web_sm"
             - name: EMBEDDING_MODEL_NAME
-              value: "${EMBEDDING_MODEL_NAME}"
+              value: "Qwen/Qwen3-Embedding-0.6B"
             - name: DEVICE
-              value: "${DEVICE}"
+              value: ""
             - name: CHUNKING_PARALLELISM
-              value: "${CHUNKING_PARALLELISM}"
+              value: "8"
             - name: BATCH_SIZE
-              value: "${BATCH_SIZE}"
+              value: "512"
             - name: SENTENCE_TRANSFORMER_BATCH_SIZE
-              value: "${SENTENCE_TRANSFORMER_BATCH_SIZE}"
+              value: "16"
             - name: ENCODING_DIM
-              value: "${ENCODING_DIM}"
+              value: "1024"
       restartPolicy: Never
       nodeSelector:
         k8s.eventual.io/node-role: textembed-sm

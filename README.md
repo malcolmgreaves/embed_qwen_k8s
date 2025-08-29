@@ -13,6 +13,8 @@ Where:
 - `INPUT` is the path, or s3 key (prefix), to the common crawl Parquet files
 - `OUTPUT` is the path, or s3 key (prefix), where the output chnked text + embeddings are written to
 
+Try using `INPUT='s3://commoncrawl/crawl-data/CC-MAIN-2025-08/segments/*/warc/*'` to run on the
+August, 2025 common crawl results!
 
 ## Running on Kubernetes
 1. Set all environment variables for configuration.
@@ -24,12 +26,12 @@ source DEFAULT_ENV
 2. Use a specific tag by setting `COMMIT` (e.g. `COMMIT=$(git rev-parse HEAD)`). Or leave it empty to use the `latest` tag.
 3. Fill-in the k8s job template:
 ```bash
-cat k8s-job-template.yaml | envsubst > k8s_job.yaml
+cat k8s-job-template.yaml | envsubst > job-k8s.yaml
 ```
 4. Run the job on k8s:
 ```bash
 NAMESPACE="..."
-kubectl -n $NAMESPACE apply -f k8s_job.yaml
+kubectl -n $NAMESPACE apply -f job-k8s.yaml
 ```
 5. Monitor the job:
 ```bash
